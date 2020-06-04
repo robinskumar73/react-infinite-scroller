@@ -1,6 +1,6 @@
 {
   "name": "snaphy-infinite-scroller",
-  "version": "1.2.8",
+  "version": "1.3.0",
   "description": "Infinite scroll component for React in ES6",
   "main": "index.js",
   "jsnext:main": "src/InfiniteScroll.js",
@@ -31,12 +31,14 @@
   "license": "MIT",
   "bugs": {},
   "dependencies": {
+    "lodash": "^4.17.15",
     "prop-types": "^15.5.8"
   },
   "peerDependencies": {
     "react": "^0.14.9 || ^15.3.0 || ^16.0.0"
   },
   "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-cli": "^6.6.5",
     "babel-core": "^6.26.3",
     "babel-eslint": "^7.2.3",
