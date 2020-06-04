@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import get from 'lodash/get';
 
 export default class InfiniteScroll extends Component {
   static propTypes = {
@@ -34,7 +35,6 @@ export default class InfiniteScroll extends Component {
 
   constructor(props) {
     super(props);
-
     this.scrollListener = this.scrollListener.bind(this);
     this.eventListenerOptions = this.eventListenerOptions.bind(this);
     this.mousewheelListener = this.mousewheelListener.bind(this);
@@ -43,25 +43,58 @@ export default class InfiniteScroll extends Component {
   componentDidMount() {
     this.pageLoaded = this.props.pageStart;
     this.options = this.eventListenerOptions();
+    if (this.props.isReverse && this.props.useWindow) {
+      this.initializing = true;
+    } else {
+      this.initializing = false;
+    }
     this.attachScrollListener();
   }
 
   componentDidUpdate() {
     if (this.props.isReverse && this.loadMore) {
       const parentElement = this.getParentElement(this.scrollComponent);
-      parentElement.scrollTop =
-        parentElement.scrollHeight -
-        this.beforeScrollHeight +
-        this.beforeScrollTop;
+
+      if (this.props.useWindow) {
+        // const currentHeight = get(document, 'body.scrollHeight')
+        //   ? get(document, 'body.scrollHeight')
+        //   : get(document, 'documentElement.scrollHeight');
+        // const scrollTop =
+        //   currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
+        const scrollTop = this.props.threshold + 40;
+        window.scrollTo(0, scrollTop);
+      } else {
+        parentElement.scrollTop =
+          parentElement.scrollHeight -
+          this.beforeScrollHeight +
+          this.beforeScrollTop;
+      }
+
       this.loadMore = false;
     }
-    this.attachScrollListener();
+    // this.attachScrollListener();
   }
 
   componentWillUnmount() {
     this.detachScrollListener();
     this.detachMousewheelListener();
   }
+
+  isWindowScrolledToBottom = () => {
+    if (typeof window !== 'undefined') {
+      const currentHeight = get(document, 'body.scrollHeight')
+        ? get(document, 'body.scrollHeight')
+        : get(document, 'documentElement.scrollHeight');
+      // @var int scrollPoint
+      const scrollPoint = window.pageYOffset + window.innerHeight;
+
+      // check if we hit the bottom of the page
+      if (scrollPoint >= currentHeight) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   isPassiveSupported() {
     let passive = false;
@@ -149,7 +182,11 @@ export default class InfiniteScroll extends Component {
   attachScrollListener() {
     const parentElement = this.getParentElement(this.scrollComponent);
 
-    if (!this.props.hasMore || !parentElement) {
+    // if (!this.props.hasMore || !parentElement) {
+    //   return;
+    // }
+
+    if (!parentElement) {
       return;
     }
 
@@ -187,10 +224,21 @@ export default class InfiniteScroll extends Component {
     }
   }
 
-  scrollListener() {
+  async scrollListener() {
     const el = this.scrollComponent;
     const scrollEl = window;
     const parentNode = this.getParentElement(el);
+
+    // In case of chat.. check if it has reached to bottom scroll..
+    if (this.initializing) {
+      // Check if scroll
+      if (this.isWindowScrolledToBottom()) {
+        this.initializing = false;
+      } else {
+        // Dont call unless its initialized..
+        return;
+      }
+    }
 
     let offset;
     if (this.props.useWindow) {
@@ -214,18 +262,53 @@ export default class InfiniteScroll extends Component {
     // Here we make sure the element is visible as well as checking the offset
     if (
       offset < Number(this.props.threshold) &&
-      (el && el.offsetParent !== null)
+      el &&
+      el.offsetParent !== null
     ) {
-      this.detachScrollListener();
-      this.beforeScrollHeight = parentNode.scrollHeight;
-      this.beforeScrollTop = parentNode.scrollTop;
+      if (!this.props.hasMore || this.loadingInProgress) {
+        return;
+      }
+      this.loadingInProgress = true;
+      // this.detachScrollListener();
+      // Show loading bar..
+      this.showLoadingbar();
+      if (this.props.useWindow) {
+        this.beforeScrollHeight = get(document, 'body.scrollHeight')
+          ? get(document, 'body.scrollHeight')
+          : get(document, 'documentElement.scrollHeight');
+        this.beforeScrollTop = window.pageYOffset;
+      } else {
+        this.beforeScrollHeight = parentNode.scrollHeight;
+        this.beforeScrollTop = parentNode.scrollTop;
+      }
+
       // Call loadMore after detachScrollListener to allow for non-async loadMore functions
       if (typeof this.props.loadMore === 'function') {
-        this.props.loadMore((this.pageLoaded += 1));
         this.loadMore = true;
+        await this.props.loadMore((this.pageLoaded += 1));
+        this.stopLoadingbar();
       }
+      this.loadingInProgress = false;
     }
   }
+
+  showLoadingbar = () => {
+    const id = 'infinite-loader';
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = 'block';
+      el.style.visibility = 'visible';
+    }
+  };
+
+  stopLoadingbar = () => {
+    const id = 'infinite-loader';
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = 'none';
+      el.style.visibility = 'hidden';
+    }
+  };
 
   calculateOffset(el, scrollTop) {
     if (!el) {
@@ -274,7 +357,17 @@ export default class InfiniteScroll extends Component {
     const childrenArray = [children];
     if (hasMore) {
       if (loader) {
-        isReverse ? childrenArray.unshift(loader) : childrenArray.push(loader);
+        const newLoader = (
+          <div
+            style={{ display: 'none', visibility: 'hidden' }}
+            id="infinite-loader"
+          >
+            {loader}
+          </div>
+        );
+        isReverse
+          ? childrenArray.unshift(newLoader)
+          : childrenArray.push(newLoader);
       } else if (this.defaultLoader) {
         isReverse
           ? childrenArray.unshift(this.defaultLoader)
