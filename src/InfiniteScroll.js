@@ -1,6 +1,6 @@
+/* eslint-disable getter-return */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import get from 'lodash/get';
 
 export default class InfiniteScroll extends Component {
   static propTypes = {
@@ -80,11 +80,11 @@ export default class InfiniteScroll extends Component {
     this.detachMousewheelListener();
   }
 
-  isWindowScrolledToBottom = () => {
+  isWindowScrolledToBottom() {
     if (typeof window !== 'undefined') {
-      const currentHeight = get(document, 'body.scrollHeight')
-        ? get(document, 'body.scrollHeight')
-        : get(document, 'documentElement.scrollHeight');
+      const currentHeight = document.body.scrollHeight
+        ? document.body.scrollHeight
+        : document.documentElement.scrollHeight;
       // @var int scrollPoint
       const scrollPoint = window.pageYOffset + window.innerHeight;
 
@@ -94,7 +94,7 @@ export default class InfiniteScroll extends Component {
       }
     }
     return false;
-  };
+  }
 
   isPassiveSupported() {
     let passive = false;
@@ -360,6 +360,7 @@ export default class InfiniteScroll extends Component {
         const newLoader = (
           <div
             style={{ display: 'none', visibility: 'hidden' }}
+            key={0}
             id="infinite-loader"
           >
             {loader}
