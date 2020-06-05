@@ -57,12 +57,12 @@ export default class InfiniteScroll extends Component {
       const parentElement = this.getParentElement(this.scrollComponent);
 
       if (this.props.useWindow) {
-        // const currentHeight = get(document, 'body.scrollHeight')
-        //   ? get(document, 'body.scrollHeight')
-        //   : get(document, 'documentElement.scrollHeight');
-        // const scrollTop =
-        //   currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
-        const scrollTop = this.props.threshold + 40;
+        const currentHeight = get(document, 'body.scrollHeight')
+          ? get(document, 'body.scrollHeight')
+          : get(document, 'documentElement.scrollHeight');
+        const scrollTop =
+          currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
+        //  const scrollTop = this.props.threshold + 40;
         window.scrollTo(0, scrollTop);
       } else {
         parentElement.scrollTop =

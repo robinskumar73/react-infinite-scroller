@@ -101,12 +101,9 @@ var InfiniteScroll = function (_Component) {
         var parentElement = this.getParentElement(this.scrollComponent);
 
         if (this.props.useWindow) {
-          // const currentHeight = get(document, 'body.scrollHeight')
-          //   ? get(document, 'body.scrollHeight')
-          //   : get(document, 'documentElement.scrollHeight');
-          // const scrollTop =
-          //   currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
-          var scrollTop = this.props.threshold + 40;
+          var currentHeight = (0, _get2.default)(document, 'body.scrollHeight') ? (0, _get2.default)(document, 'body.scrollHeight') : (0, _get2.default)(document, 'documentElement.scrollHeight');
+          var scrollTop = currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
+          //  const scrollTop = this.props.threshold + 40;
           window.scrollTo(0, scrollTop);
         } else {
           parentElement.scrollTop = parentElement.scrollHeight - this.beforeScrollHeight + this.beforeScrollTop;
