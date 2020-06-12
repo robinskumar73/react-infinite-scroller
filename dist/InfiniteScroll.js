@@ -60,7 +60,9 @@ var InfiniteScroll = function (_Component) {
 
     _this.scrollToPreviousPosition = function () {
       var scrollTop = _this.props.threshold + 30;
-      window.scrollTo(0, scrollTop);
+      setTimeout(function () {
+        window.scrollTo(0, scrollTop);
+      });
     };
 
     _this.showLoadingbar = function () {
