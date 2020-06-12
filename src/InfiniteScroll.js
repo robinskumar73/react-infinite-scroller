@@ -286,7 +286,10 @@ export default class InfiniteScroll extends Component {
       if (typeof this.props.loadMore === 'function') {
         this.loadMore = true;
         await this.props.loadMore((this.pageLoaded += 1));
-        scrollToPreviousPosition();
+        if (this.props.isReverse) {
+          scrollToPreviousPosition();
+        }
+
         this.stopLoadingbar();
       }
       this.loadingInProgress = false;
