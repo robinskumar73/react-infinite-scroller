@@ -322,7 +322,8 @@ var InfiniteScroll = function (_Component) {
               case 15:
                 this.loadingInProgress = true;
                 // this.detachScrollListener();
-
+                // Show loading bar..
+                this.showLoadingbar();
                 if (this.props.useWindow) {
                   this.beforeScrollHeight = (0, _get2.default)(document, 'body.scrollHeight') ? (0, _get2.default)(document, 'body.scrollHeight') : (0, _get2.default)(document, 'documentElement.scrollHeight');
                   this.beforeScrollTop = window.pageYOffset;
@@ -330,8 +331,7 @@ var InfiniteScroll = function (_Component) {
                   this.beforeScrollHeight = parentNode.scrollHeight;
                   this.beforeScrollTop = parentNode.scrollTop;
                 }
-                // Show loading bar..
-                this.showLoadingbar();
+
                 // Call loadMore after detachScrollListener to allow for non-async loadMore functions
 
                 if (!(typeof this.props.loadMore === 'function')) {
@@ -344,8 +344,8 @@ var InfiniteScroll = function (_Component) {
                 return this.props.loadMore(this.pageLoaded += 1);
 
               case 22:
-                this.stopLoadingbar();
                 scrollToPreviousPosition();
+                this.stopLoadingbar();
 
               case 24:
                 this.loadingInProgress = false;

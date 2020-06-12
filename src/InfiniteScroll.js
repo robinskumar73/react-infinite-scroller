@@ -295,7 +295,9 @@ export default class InfiniteScroll extends Component {
 
   scrollToPreviousPosition = () => {
     const scrollTop = this.props.threshold + 30;
-    window.scrollTo(0, scrollTop);
+    setTimeout(() => {
+      window.scrollTo(0, scrollTop);
+    });
   };
 
   showLoadingbar = () => {
