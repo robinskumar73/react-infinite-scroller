@@ -57,13 +57,12 @@ export default class InfiniteScroll extends Component {
       const parentElement = this.getParentElement(this.scrollComponent);
 
       if (this.props.useWindow) {
-        const currentHeight = get(document, 'body.scrollHeight')
-          ? get(document, 'body.scrollHeight')
-          : get(document, 'documentElement.scrollHeight');
-        const scrollTop =
-          currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
-        //  const scrollTop = this.props.threshold + 40;
-        window.scrollTo(0, scrollTop);
+        // const currentHeight = get(document, 'body.scrollHeight')
+        //   ? get(document, 'body.scrollHeight')
+        //   : get(document, 'documentElement.scrollHeight');
+        // // const scrollTop = currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
+        // const scrollTop = this.props.threshold + 40;
+        // window.scrollTo(0, scrollTop);
       } else {
         parentElement.scrollTop =
           parentElement.scrollHeight -
@@ -229,7 +228,7 @@ export default class InfiniteScroll extends Component {
     const el = this.scrollComponent;
     const scrollEl = window;
     const parentNode = this.getParentElement(el);
-
+    const { scrollToPreviousPosition } = this;
     // In case of chat.. check if it has reached to bottom scroll..
     if (this.initializing) {
       // Check if scroll
@@ -271,8 +270,7 @@ export default class InfiniteScroll extends Component {
       }
       this.loadingInProgress = true;
       // this.detachScrollListener();
-      // Show loading bar..
-      this.showLoadingbar();
+
       if (this.props.useWindow) {
         this.beforeScrollHeight = get(document, 'body.scrollHeight')
           ? get(document, 'body.scrollHeight')
@@ -282,16 +280,23 @@ export default class InfiniteScroll extends Component {
         this.beforeScrollHeight = parentNode.scrollHeight;
         this.beforeScrollTop = parentNode.scrollTop;
       }
-
+      // Show loading bar..
+      this.showLoadingbar();
       // Call loadMore after detachScrollListener to allow for non-async loadMore functions
       if (typeof this.props.loadMore === 'function') {
         this.loadMore = true;
         await this.props.loadMore((this.pageLoaded += 1));
         this.stopLoadingbar();
+        scrollToPreviousPosition();
       }
       this.loadingInProgress = false;
     }
   }
+
+  scrollToPreviousPosition = () => {
+    const scrollTop = this.props.threshold + 30;
+    window.scrollTo(0, scrollTop);
+  };
 
   showLoadingbar = () => {
     const id = 'infinite-loader';

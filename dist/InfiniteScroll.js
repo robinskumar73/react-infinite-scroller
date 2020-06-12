@@ -58,6 +58,11 @@ var InfiniteScroll = function (_Component) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (InfiniteScroll.__proto__ || (0, _getPrototypeOf2.default)(InfiniteScroll)).call(this, props));
 
+    _this.scrollToPreviousPosition = function () {
+      var scrollTop = _this.props.threshold + 30;
+      window.scrollTo(0, scrollTop);
+    };
+
     _this.showLoadingbar = function () {
       var id = 'infinite-loader';
       var el = document.getElementById(id);
@@ -101,10 +106,12 @@ var InfiniteScroll = function (_Component) {
         var parentElement = this.getParentElement(this.scrollComponent);
 
         if (this.props.useWindow) {
-          var currentHeight = (0, _get2.default)(document, 'body.scrollHeight') ? (0, _get2.default)(document, 'body.scrollHeight') : (0, _get2.default)(document, 'documentElement.scrollHeight');
-          var scrollTop = currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
-          //  const scrollTop = this.props.threshold + 40;
-          window.scrollTo(0, scrollTop);
+          // const currentHeight = get(document, 'body.scrollHeight')
+          //   ? get(document, 'body.scrollHeight')
+          //   : get(document, 'documentElement.scrollHeight');
+          // // const scrollTop = currentHeight - this.beforeScrollHeight + this.beforeScrollTop;
+          // const scrollTop = this.props.threshold + 40;
+          // window.scrollTo(0, scrollTop);
         } else {
           parentElement.scrollTop = parentElement.scrollHeight - this.beforeScrollHeight + this.beforeScrollTop;
         }
@@ -252,7 +259,7 @@ var InfiniteScroll = function (_Component) {
     key: 'scrollListener',
     value: function () {
       var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
-        var el, scrollEl, parentNode, offset, doc, scrollTop;
+        var el, scrollEl, parentNode, scrollToPreviousPosition, offset, doc, scrollTop;
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -260,27 +267,27 @@ var InfiniteScroll = function (_Component) {
                 el = this.scrollComponent;
                 scrollEl = window;
                 parentNode = this.getParentElement(el);
-
+                scrollToPreviousPosition = this.scrollToPreviousPosition;
                 // In case of chat.. check if it has reached to bottom scroll..
 
                 if (!this.initializing) {
-                  _context.next = 9;
+                  _context.next = 10;
                   break;
                 }
 
                 if (!this.isWindowScrolledToBottom()) {
-                  _context.next = 8;
+                  _context.next = 9;
                   break;
                 }
 
                 this.initializing = false;
-                _context.next = 9;
+                _context.next = 10;
                 break;
 
-              case 8:
+              case 9:
                 return _context.abrupt('return');
 
-              case 9:
+              case 10:
                 offset = void 0;
 
                 if (this.props.useWindow) {
@@ -301,22 +308,21 @@ var InfiniteScroll = function (_Component) {
                 // Here we make sure the element is visible as well as checking the offset
 
                 if (!(offset < Number(this.props.threshold) && el && el.offsetParent !== null)) {
-                  _context.next = 23;
+                  _context.next = 25;
                   break;
                 }
 
                 if (!(!this.props.hasMore || this.loadingInProgress)) {
-                  _context.next = 14;
+                  _context.next = 15;
                   break;
                 }
 
                 return _context.abrupt('return');
 
-              case 14:
+              case 15:
                 this.loadingInProgress = true;
                 // this.detachScrollListener();
-                // Show loading bar..
-                this.showLoadingbar();
+
                 if (this.props.useWindow) {
                   this.beforeScrollHeight = (0, _get2.default)(document, 'body.scrollHeight') ? (0, _get2.default)(document, 'body.scrollHeight') : (0, _get2.default)(document, 'documentElement.scrollHeight');
                   this.beforeScrollTop = window.pageYOffset;
@@ -324,25 +330,27 @@ var InfiniteScroll = function (_Component) {
                   this.beforeScrollHeight = parentNode.scrollHeight;
                   this.beforeScrollTop = parentNode.scrollTop;
                 }
-
+                // Show loading bar..
+                this.showLoadingbar();
                 // Call loadMore after detachScrollListener to allow for non-async loadMore functions
 
                 if (!(typeof this.props.loadMore === 'function')) {
-                  _context.next = 22;
+                  _context.next = 24;
                   break;
                 }
 
                 this.loadMore = true;
-                _context.next = 21;
+                _context.next = 22;
                 return this.props.loadMore(this.pageLoaded += 1);
 
-              case 21:
-                this.stopLoadingbar();
-
               case 22:
+                this.stopLoadingbar();
+                scrollToPreviousPosition();
+
+              case 24:
                 this.loadingInProgress = false;
 
-              case 23:
+              case 25:
               case 'end':
                 return _context.stop();
             }
