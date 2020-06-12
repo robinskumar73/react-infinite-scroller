@@ -270,7 +270,8 @@ export default class InfiniteScroll extends Component {
       }
       this.loadingInProgress = true;
       // this.detachScrollListener();
-
+      // Show loading bar..
+      this.showLoadingbar();
       if (this.props.useWindow) {
         this.beforeScrollHeight = get(document, 'body.scrollHeight')
           ? get(document, 'body.scrollHeight')
@@ -280,14 +281,13 @@ export default class InfiniteScroll extends Component {
         this.beforeScrollHeight = parentNode.scrollHeight;
         this.beforeScrollTop = parentNode.scrollTop;
       }
-      // Show loading bar..
-      this.showLoadingbar();
+
       // Call loadMore after detachScrollListener to allow for non-async loadMore functions
       if (typeof this.props.loadMore === 'function') {
         this.loadMore = true;
         await this.props.loadMore((this.pageLoaded += 1));
-        this.stopLoadingbar();
         scrollToPreviousPosition();
+        this.stopLoadingbar();
       }
       this.loadingInProgress = false;
     }
