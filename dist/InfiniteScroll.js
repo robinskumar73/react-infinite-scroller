@@ -346,7 +346,10 @@ var InfiniteScroll = function (_Component) {
                 return this.props.loadMore(this.pageLoaded += 1);
 
               case 22:
-                scrollToPreviousPosition();
+                if (this.props.isReverse) {
+                  scrollToPreviousPosition();
+                }
+
                 this.stopLoadingbar();
 
               case 24:
