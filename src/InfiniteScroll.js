@@ -1,3 +1,9 @@
+/* eslint-disable react/no-unused-prop-types */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable lodash/prefer-lodash-typecheck */
+/* eslint-disable lodash/prefer-get */
+/* eslint-disable react/sort-comp */
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable getter-return */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -44,18 +50,14 @@ export default class InfiniteScroll extends Component {
   componentDidMount() {
     this.pageLoaded = this.props.pageStart;
     this.options = this.eventListenerOptions();
-    if (this.props.isReverse && this.props.useWindow) {
-      this.initializing = true;
-    } else {
-      this.initializing = false;
-    }
+    // 26th Nov
+    this.initializing = false;
     this.attachScrollListener();
   }
 
   componentDidUpdate() {
     if (this.props.isReverse && this.loadMore) {
       const parentElement = this.getParentElement(this.scrollComponent);
-
       if (this.props.useWindow) {
         // const currentHeight = get(document, 'body.scrollHeight')
         //   ? get(document, 'body.scrollHeight')
@@ -69,8 +71,6 @@ export default class InfiniteScroll extends Component {
           this.beforeScrollHeight +
           this.beforeScrollTop;
       }
-
-      this.loadMore = false;
     }
     // this.attachScrollListener();
   }
@@ -80,21 +80,21 @@ export default class InfiniteScroll extends Component {
     this.detachMousewheelListener();
   }
 
-  isWindowScrolledToBottom() {
-    if (typeof window !== 'undefined') {
-      const currentHeight = get(document, 'body.scrollHeight')
-        ? get(document, 'body.scrollHeight')
-        : get(document, 'documentElement.scrollHeight');
-      // @var int scrollPoint
-      const scrollPoint = window.pageYOffset + window.innerHeight;
+  // isWindowScrolledToBottom() {
+  //   if (typeof window !== 'undefined') {
+  //     const currentHeight = get(document, 'body.scrollHeight')
+  //       ? get(document, 'body.scrollHeight')
+  //       : get(document, 'documentElement.scrollHeight');
+  //     // @var int scrollPoint
+  //     const scrollPoint = window.pageYOffset + window.innerHeight;
 
-      // check if we hit the bottom of the page
-      if (scrollPoint >= currentHeight) {
-        return true;
-      }
-    }
-    return false;
-  }
+  //     // check if we hit the bottom of the page
+  //     if (scrollPoint >= currentHeight) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
 
   isPassiveSupported() {
     let passive = false;
@@ -297,10 +297,20 @@ export default class InfiniteScroll extends Component {
   }
 
   scrollToPreviousPosition = () => {
+    const el = this.scrollComponent;
     const scrollTop = this.props.threshold + 30;
-    setTimeout(() => {
-      window.scrollTo(0, scrollTop);
-    });
+    if (this.props.useWindow) {
+      setTimeout(() => {
+        window.scrollTo(0, scrollTop);
+      });
+    } else {
+      const parentNode = this.getParentElement(el);
+      if (parentNode) {
+        setTimeout(() => {
+          parentNode.scrollTo(0, scrollTop);
+        });
+      }
+    }
   };
 
   showLoadingbar = () => {

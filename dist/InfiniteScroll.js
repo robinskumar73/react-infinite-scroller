@@ -59,10 +59,20 @@ var InfiniteScroll = function (_Component) {
     var _this = (0, _possibleConstructorReturn3.default)(this, (InfiniteScroll.__proto__ || (0, _getPrototypeOf2.default)(InfiniteScroll)).call(this, props));
 
     _this.scrollToPreviousPosition = function () {
+      var el = _this.scrollComponent;
       var scrollTop = _this.props.threshold + 30;
-      setTimeout(function () {
-        window.scrollTo(0, scrollTop);
-      });
+      if (_this.props.useWindow) {
+        setTimeout(function () {
+          window.scrollTo(0, scrollTop);
+        });
+      } else {
+        var parentNode = _this.getParentElement(el);
+        if (parentNode) {
+          setTimeout(function () {
+            parentNode.scrollTo(0, scrollTop);
+          });
+        }
+      }
     };
 
     _this.showLoadingbar = function () {
@@ -94,11 +104,8 @@ var InfiniteScroll = function (_Component) {
     value: function componentDidMount() {
       this.pageLoaded = this.props.pageStart;
       this.options = this.eventListenerOptions();
-      if (this.props.isReverse && this.props.useWindow) {
-        this.initializing = true;
-      } else {
-        this.initializing = false;
-      }
+      // 26th Nov
+      this.initializing = false;
       this.attachScrollListener();
     }
   }, {
@@ -106,7 +113,6 @@ var InfiniteScroll = function (_Component) {
     value: function componentDidUpdate() {
       if (this.props.isReverse && this.loadMore) {
         var parentElement = this.getParentElement(this.scrollComponent);
-
         if (this.props.useWindow) {
           // const currentHeight = get(document, 'body.scrollHeight')
           //   ? get(document, 'body.scrollHeight')
@@ -117,8 +123,6 @@ var InfiniteScroll = function (_Component) {
         } else {
           parentElement.scrollTop = parentElement.scrollHeight - this.beforeScrollHeight + this.beforeScrollTop;
         }
-
-        this.loadMore = false;
       }
       // this.attachScrollListener();
     }
@@ -128,21 +132,23 @@ var InfiniteScroll = function (_Component) {
       this.detachScrollListener();
       this.detachMousewheelListener();
     }
-  }, {
-    key: 'isWindowScrolledToBottom',
-    value: function isWindowScrolledToBottom() {
-      if (typeof window !== 'undefined') {
-        var currentHeight = (0, _get2.default)(document, 'body.scrollHeight') ? (0, _get2.default)(document, 'body.scrollHeight') : (0, _get2.default)(document, 'documentElement.scrollHeight');
-        // @var int scrollPoint
-        var scrollPoint = window.pageYOffset + window.innerHeight;
 
-        // check if we hit the bottom of the page
-        if (scrollPoint >= currentHeight) {
-          return true;
-        }
-      }
-      return false;
-    }
+    // isWindowScrolledToBottom() {
+    //   if (typeof window !== 'undefined') {
+    //     const currentHeight = get(document, 'body.scrollHeight')
+    //       ? get(document, 'body.scrollHeight')
+    //       : get(document, 'documentElement.scrollHeight');
+    //     // @var int scrollPoint
+    //     const scrollPoint = window.pageYOffset + window.innerHeight;
+
+    //     // check if we hit the bottom of the page
+    //     if (scrollPoint >= currentHeight) {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // }
+
   }, {
     key: 'isPassiveSupported',
     value: function isPassiveSupported() {
@@ -436,7 +442,13 @@ var InfiniteScroll = function (_Component) {
     }
   }]);
   return InfiniteScroll;
-}(_react.Component); /* eslint-disable getter-return */
+}(_react.Component); /* eslint-disable react/no-unused-prop-types */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable lodash/prefer-lodash-typecheck */
+/* eslint-disable lodash/prefer-get */
+/* eslint-disable react/sort-comp */
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable getter-return */
 
 
 InfiniteScroll.propTypes = {
