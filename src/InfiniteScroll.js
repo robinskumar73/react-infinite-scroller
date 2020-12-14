@@ -105,12 +105,15 @@ export default class InfiniteScroll extends Component {
       }
     };
 
-    try {
-      document.addEventListener('test', null, testOptions);
-      document.removeEventListener('test', null, testOptions);
-    } catch (e) {
-      // ignore
+    if (typeof document !== 'undefined') {
+      try {
+        document.addEventListener('test', null, testOptions);
+        document.removeEventListener('test', null, testOptions);
+      } catch (e) {
+        // ignore
+      }
     }
+
     return passive;
   }
 
@@ -140,12 +143,13 @@ export default class InfiniteScroll extends Component {
     if (this.props.useWindow === false) {
       scrollEl = this.scrollComponent.parentNode;
     }
-
-    scrollEl.removeEventListener(
-      'mousewheel',
-      this.mousewheelListener,
-      this.options ? this.options : this.props.useCapture
-    );
+    if (scrollEl) {
+      scrollEl.removeEventListener(
+        'mousewheel',
+        this.mousewheelListener,
+        this.options ? this.options : this.props.useCapture
+      );
+    }
   }
 
   detachScrollListener() {
@@ -153,17 +157,18 @@ export default class InfiniteScroll extends Component {
     if (this.props.useWindow === false) {
       scrollEl = this.getParentElement(this.scrollComponent);
     }
-
-    scrollEl.removeEventListener(
-      'scroll',
-      this.scrollListener,
-      this.options ? this.options : this.props.useCapture
-    );
-    scrollEl.removeEventListener(
-      'resize',
-      this.scrollListener,
-      this.options ? this.options : this.props.useCapture
-    );
+    if (scrollEl) {
+      scrollEl.removeEventListener(
+        'scroll',
+        this.scrollListener,
+        this.options ? this.options : this.props.useCapture
+      );
+      scrollEl.removeEventListener(
+        'resize',
+        this.scrollListener,
+        this.options ? this.options : this.props.useCapture
+      );
+    }
   }
 
   getParentElement(el) {
@@ -194,22 +199,23 @@ export default class InfiniteScroll extends Component {
     if (this.props.useWindow === false) {
       scrollEl = parentElement;
     }
-
-    scrollEl.addEventListener(
-      'mousewheel',
-      this.mousewheelListener,
-      this.options ? this.options : this.props.useCapture
-    );
-    scrollEl.addEventListener(
-      'scroll',
-      this.scrollListener,
-      this.options ? this.options : this.props.useCapture
-    );
-    scrollEl.addEventListener(
-      'resize',
-      this.scrollListener,
-      this.options ? this.options : this.props.useCapture
-    );
+    if (scrollEl) {
+      scrollEl.addEventListener(
+        'mousewheel',
+        this.mousewheelListener,
+        this.options ? this.options : this.props.useCapture
+      );
+      scrollEl.addEventListener(
+        'scroll',
+        this.scrollListener,
+        this.options ? this.options : this.props.useCapture
+      );
+      scrollEl.addEventListener(
+        'resize',
+        this.scrollListener,
+        this.options ? this.options : this.props.useCapture
+      );
+    }
 
     if (this.props.initialLoad) {
       this.scrollListener();
