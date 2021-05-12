@@ -382,26 +382,25 @@ export default class InfiniteScroll extends Component {
     };
 
     const childrenArray = [children];
-    if (hasMore) {
-      if (loader) {
-        const newLoader = (
-          <div
-            style={{ display: 'none', visibility: 'hidden' }}
-            key={0}
-            id="infinite-loader"
-          >
-            {loader}
-          </div>
-        );
-        isReverse
-          ? childrenArray.unshift(newLoader)
-          : childrenArray.push(newLoader);
-      } else if (this.defaultLoader) {
-        isReverse
-          ? childrenArray.unshift(this.defaultLoader)
-          : childrenArray.push(this.defaultLoader);
-      }
+    if (loader) {
+      const newLoader = (
+        <div
+          style={{ display: 'none', visibility: 'hidden' }}
+          key={0}
+          id="infinite-loader"
+        >
+          {loader}
+        </div>
+      );
+      isReverse
+        ? childrenArray.unshift(newLoader)
+        : childrenArray.push(newLoader);
+    } else if (this.defaultLoader) {
+      isReverse
+        ? childrenArray.unshift(this.defaultLoader)
+        : childrenArray.push(this.defaultLoader);
     }
+
     return React.createElement(element, props, childrenArray);
   }
 }

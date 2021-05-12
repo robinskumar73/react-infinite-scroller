@@ -431,22 +431,21 @@ var InfiniteScroll = function (_Component) {
       };
 
       var childrenArray = [children];
-      if (hasMore) {
-        if (loader) {
-          var newLoader = _react2.default.createElement(
-            'div',
-            {
-              style: { display: 'none', visibility: 'hidden' },
-              key: 0,
-              id: 'infinite-loader'
-            },
-            loader
-          );
-          isReverse ? childrenArray.unshift(newLoader) : childrenArray.push(newLoader);
-        } else if (this.defaultLoader) {
-          isReverse ? childrenArray.unshift(this.defaultLoader) : childrenArray.push(this.defaultLoader);
-        }
+      if (loader) {
+        var newLoader = _react2.default.createElement(
+          'div',
+          {
+            style: { display: 'none', visibility: 'hidden' },
+            key: 0,
+            id: 'infinite-loader'
+          },
+          loader
+        );
+        isReverse ? childrenArray.unshift(newLoader) : childrenArray.push(newLoader);
+      } else if (this.defaultLoader) {
+        isReverse ? childrenArray.unshift(this.defaultLoader) : childrenArray.push(this.defaultLoader);
       }
+
       return _react2.default.createElement(element, props, childrenArray);
     }
   }]);
