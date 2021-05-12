@@ -93,6 +93,7 @@ var InfiniteScroll = function (_Component) {
       }
     };
 
+    _this.style = { display: 'none', visibility: 'hidden' };
     _this.scrollListener = _this.scrollListener.bind(_this);
     _this.eventListenerOptions = _this.eventListenerOptions.bind(_this);
     _this.mousewheelListener = _this.mousewheelListener.bind(_this);
@@ -434,11 +435,7 @@ var InfiniteScroll = function (_Component) {
       if (loader) {
         var newLoader = _react2.default.createElement(
           'div',
-          {
-            style: { display: 'none', visibility: 'hidden' },
-            key: 0,
-            id: 'infinite-loader'
-          },
+          { style: this.style, key: 0, id: 'infinite-loader' },
           loader
         );
         isReverse ? childrenArray.unshift(newLoader) : childrenArray.push(newLoader);
