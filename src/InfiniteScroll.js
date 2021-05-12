@@ -42,6 +42,7 @@ export default class InfiniteScroll extends Component {
 
   constructor(props) {
     super(props);
+    this.style = { display: 'none', visibility: 'hidden' };
     this.scrollListener = this.scrollListener.bind(this);
     this.eventListenerOptions = this.eventListenerOptions.bind(this);
     this.mousewheelListener = this.mousewheelListener.bind(this);
@@ -384,11 +385,7 @@ export default class InfiniteScroll extends Component {
     const childrenArray = [children];
     if (loader) {
       const newLoader = (
-        <div
-          style={{ display: 'none', visibility: 'hidden' }}
-          key={0}
-          id="infinite-loader"
-        >
+        <div style={this.style} key={0} id="infinite-loader">
           {loader}
         </div>
       );
